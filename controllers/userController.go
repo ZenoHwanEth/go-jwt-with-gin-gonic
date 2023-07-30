@@ -1,21 +1,13 @@
 package controllers
 
 import (
-	"context"
-	"fmt"
 	"golang-jwt-project/helpers"
-	helper "golang-jwt-project/helpers"
-	"golang-jwt-project/models"
-	"log"
 	"net/http"
-	"strconv"
-	"time"
 
 	"github.com/ZenoHwanEth/go-jwt-with-gin-gonic/database"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
@@ -31,4 +23,13 @@ func Login(password string)
 
 func GetUsers()
 
-func GetUser()
+func GetUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId := c.Param("user_id")
+
+		if err := helpers.MatchUserTypeToUid(c, userId); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+	}
+}
