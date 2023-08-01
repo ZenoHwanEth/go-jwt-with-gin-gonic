@@ -1,8 +1,13 @@
 package controllers
 
 import (
-	"golang-jwt-project/helpers"
+	"context"
 	"net/http"
+	"time"
+
+	"github.com/ZenoHwanEth/go-jwt-with-gin-gonic/helpers"
+	"github.com/ZenoHwanEth/go-jwt-with-gin-gonic/models"
+	"gopkg.in/mgo.v2/bson"
 
 	"github.com/ZenoHwanEth/go-jwt-with-gin-gonic/database"
 	"github.com/gin-gonic/gin"
@@ -31,5 +36,9 @@ func GetUser() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+		var user models.User
+		err := userCollection.FindOne(ctx, bson.M{"user_id": userId}).Decode(&user)
 	}
 }
