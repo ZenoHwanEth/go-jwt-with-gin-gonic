@@ -13,6 +13,7 @@ import (
 	"github.com/ZenoHwanEth/go-jwt-with-gin-gonic/database"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -56,6 +57,12 @@ func Signup(password string) gin.HandlerFunc {
 		if count > 0 {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "this email or phone number is already exists"})
 		}
+
+		user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+		user.ID = primitive.NewObjectID()
+		user.User_id = user.ID.Hex()
+		token, refreshToken, _ := helper.GenerateAllTokens(*user.Email, *user.First_name, *user.Last_name)
 	}
 }
 
