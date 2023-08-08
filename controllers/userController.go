@@ -63,6 +63,8 @@ func Signup(password string) gin.HandlerFunc {
 		user.ID = primitive.NewObjectID()
 		user.User_id = user.ID.Hex()
 		token, refreshToken, _ := helper.GenerateAllTokens(*user.Email, *user.First_name, *user.Last_name)
+		user.Token = &token
+		user.Refresh_token = &refreshToken
 	}
 }
 
